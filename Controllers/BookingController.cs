@@ -16,6 +16,21 @@ namespace Seasharpcustomerbooking.Controllers
         {
             return View();
         }
+
+        public ActionResult Create()
+        {
+            try
+            {
+                return View(new BookingModel());
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex.Message);
+                return View();
+            }
+
+        }
+        [HttpPost]
         public async Task<IActionResult> Create(BookingModel booking) //detta är för bokning av rum för kunder
         {
             List<CategoryModel> Category = new List<CategoryModel>();
@@ -41,7 +56,7 @@ namespace Seasharpcustomerbooking.Controllers
             List<RoomModel> qualifiedrooms = new List<RoomModel>();
             foreach (var item in room) //Detta skapar en ny lista med bokningsbara rum
             {
-                if (item.CategoryId == booking.CategoryId)
+                if (item.CategoryId == 5/*booking.CategoryId*/)
                 {
                     foreach (var element in bookinglist)
                     {
@@ -53,7 +68,7 @@ namespace Seasharpcustomerbooking.Controllers
 
                         if (start >= bookingstart || end >= bookingstart)
                         {
-                            if (start <= bookingend || end <= bookingend)
+                            if (start <= bookingend || end <= bookingend) //går inte in här
                             {
 
                                 qualifiedrooms.Add(item);
