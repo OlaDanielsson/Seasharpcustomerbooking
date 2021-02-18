@@ -33,51 +33,73 @@ namespace Seasharpcustomerbooking.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(BookingModel booking) //detta är för bokning av rum för kunder
         {
-            List<CategoryModel> Category = new List<CategoryModel>();
+            List<CategoryModel> Categorylist = new List<CategoryModel>();
 
-            var response2 = await ApiConnection.ApiClient.GetAsync("CategoryModels");
-            string jsonresponse2 = await response2.Content.ReadAsStringAsync();
-            Category = JsonConvert.DeserializeObject<List<CategoryModel>>(jsonresponse2);
+            var categoryresponse = await ApiConnection.ApiClient.GetAsync("CategoryModels");
+            string jsoncategoryresponse = await categoryresponse.Content.ReadAsStringAsync();
+            Categorylist = JsonConvert.DeserializeObject<List<CategoryModel>>(jsoncategoryresponse);
             ////La till den raden här under
-            ViewData["CategoryId"] = new SelectList(Category, "Id", "Description");
+            ViewData["CategoryId"] = new SelectList(Categorylist, "Id", "Description");
 
-            List<RoomModel> room = new List<RoomModel>();
+            List<RoomModel> roomlist = new List<RoomModel>();
 
-            var response = await ApiConnection.ApiClient.GetAsync("RoomModels");
-            string jsonresponse = await response.Content.ReadAsStringAsync();
-            room = JsonConvert.DeserializeObject<List<RoomModel>>(jsonresponse);
+            var roomresponse = await ApiConnection.ApiClient.GetAsync("RoomModels");
+            string jsonroomresponse = await roomresponse.Content.ReadAsStringAsync();
+            roomlist = JsonConvert.DeserializeObject<List<RoomModel>>(jsonroomresponse);
 
             List<BookingModel> bookinglist = new List<BookingModel>();
 
-            var response1 = await ApiConnection.ApiClient.GetAsync("Bookingmodels");
-            string jsonresponse1 = await response.Content.ReadAsStringAsync();
-            bookinglist = JsonConvert.DeserializeObject<List<BookingModel>>(jsonresponse);
+            var bookingresponse = await ApiConnection.ApiClient.GetAsync("Bookingmodels");
+            string jsonbookingresponse = await bookingresponse.Content.ReadAsStringAsync();
+            bookinglist = JsonConvert.DeserializeObject<List<BookingModel>>(jsonbookingresponse);
 
             List<RoomModel> qualifiedrooms = new List<RoomModel>();
-            foreach (var item in room) //Detta skapar en ny lista med bokningsbara rum
+            List<RoomModel> corcatroom = new List<RoomModel>();
+
+            foreach (var item in roomlist) //loopar igenom listan room
             {
-                if (item.CategoryId == 5/*booking.CategoryId*/)
+                if (item.CategoryId == ViewBag.CategoryId) //om något item i listan room har samma categori Id som användarinmatningen så går den vidare
                 {
-                    foreach (var element in bookinglist)
-                    {
-                        int start = int.Parse(DateTime.Parse(element.StartDate.ToString()).ToString().Remove(10, 9).Remove(4, 1).Remove(6, 1));
-                        int end = int.Parse(DateTime.Parse(element.StartDate.ToString()).ToString().Remove(10, 9).Remove(4, 1).Remove(6, 1));
-                        int bookingstart = int.Parse(DateTime.Parse(booking.StartDate.ToString()).ToString().Remove(10, 9).Remove(4, 1).Remove(6, 1));
-                        int bookingend = int.Parse(DateTime.Parse(booking.StartDate.ToString()).ToString().Remove(10, 9).Remove(4, 1).Remove(6, 1));
-
-
-                        if (start >= bookingstart || end >= bookingstart)
-                        {
-                            if (start <= bookingend || end <= bookingend) //går inte in här
-                            {
-
-                                qualifiedrooms.Add(item);
-
-                            }
-                        }
-                    }
+                    corcatroom.Add(item);    
                 }
             }
+            List<RoomModel> CompareList = new List<RoomModel>();
+            foreach (var item in corcatroom) //loopar igenom bokningslistan
+            {
+                foreach (var element in bookinglist)
+                {
+                    if (element.RoomId == item.Id)
+                    {
+                        int start = int.Parse(DateTime.Parse(element.StartDate.ToString()).ToString().Remove(10, 9).Remove(4, 1).Remove(6, 1));
+                        int end = int.Parse(DateTime.Parse(element.EndDate.ToString()).ToString().Remove(10, 9).Remove(4, 1).Remove(6, 1));
+                        int bookingstart = int.Parse(DateTime.Parse(booking.StartDate.ToString()).ToString().Remove(10, 9).Remove(4, 1).Remove(6, 1));
+                        int bookingend = int.Parse(DateTime.Parse(booking.EndDate.ToString()).ToString().Remove(10, 9).Remove(4, 1).Remove(6, 1));
+
+
+                        if ((start < bookingstart && end < bookingstart) || (start > bookingend && end > bookingend)) // testar tidsintervallet, finns ingen bokning lägg till rum i listan
+                        {
+                            qualifiedrooms.Add(item);
+                            break;
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        CompareList.Add(item);  
+                    }
+                    if (bookinglist.Count == CompareList.Count)
+                    {
+                        qualifiedrooms.Add(item);
+                        break;
+                    }
+
+                }
+                CompareList.Clear();
+            }
+
             // skapa bokning av rum som ligger först i listan Qualifiedrooms
             int roomid = qualifiedrooms.First().Id;
 
