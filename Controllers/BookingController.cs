@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Json;
 using System.Threading.Tasks;
 
 namespace Seasharpcustomerbooking.Controllers
@@ -17,10 +18,15 @@ namespace Seasharpcustomerbooking.Controllers
             return View();
         }
 
-        public ActionResult Create()
+        public async Task<IActionResult> Create(int Id, int GuestId)
         {
             try
             {
+                List<CategoryModel> categoryList = await ApiConnection.GetCategoryList();
+
+                ViewData["Desc"] = new SelectList(categoryList, "Id", "Description"); //för att fixa viewdata
+                HttpResponseMessage responseRoom = ApiConnection.ApiClient.GetAsync("CategoryModels/").Result;
+
                 return View(new BookingModel());
             }
             catch (Exception ex)
@@ -28,83 +34,78 @@ namespace Seasharpcustomerbooking.Controllers
                 System.Diagnostics.Debug.WriteLine(ex.Message);
                 return View();
             }
-
         }
         [HttpPost]
-        public async Task<IActionResult> Create(BookingModel booking) //detta är för bokning av rum för kunder
+        public async Task<IActionResult> Create(BookingModel booking)
         {
-            List<CategoryModel> Categorylist = new List<CategoryModel>();
-
-            var categoryresponse = await ApiConnection.ApiClient.GetAsync("CategoryModels");
-            string jsoncategoryresponse = await categoryresponse.Content.ReadAsStringAsync();
-            Categorylist = JsonConvert.DeserializeObject<List<CategoryModel>>(jsoncategoryresponse);
-            ////La till den raden här under
-            ViewData["CategoryId"] = new SelectList(Categorylist, "Id", "Description");
-
-            List<RoomModel> roomlist = new List<RoomModel>();
-
-            var roomresponse = await ApiConnection.ApiClient.GetAsync("RoomModels");
-            string jsonroomresponse = await roomresponse.Content.ReadAsStringAsync();
-            roomlist = JsonConvert.DeserializeObject<List<RoomModel>>(jsonroomresponse);
-
-            List<BookingModel> bookinglist = new List<BookingModel>();
-
-            var bookingresponse = await ApiConnection.ApiClient.GetAsync("Bookingmodels");
-            string jsonbookingresponse = await bookingresponse.Content.ReadAsStringAsync();
-            bookinglist = JsonConvert.DeserializeObject<List<BookingModel>>(jsonbookingresponse);
-
-            List<RoomModel> qualifiedrooms = new List<RoomModel>();
-            List<RoomModel> corcatroom = new List<RoomModel>();
-
-            foreach (var item in roomlist) //loopar igenom listan room
+            try
             {
-                if (item.CategoryId == ViewBag.CategoryId) //om något item i listan room har samma categori Id som användarinmatningen så går den vidare
+                List<CategoryModel> categoryList = await ApiConnection.GetCategoryList();
+                List<RoomModel> roomList = await ApiConnection.GetRoomList();
+                List<BookingModel> bookingList = await ApiConnection.GetBookingList();
+
+                List<RoomModel> qualifiedrooms = new List<RoomModel>();
+                List<RoomModel> corcatroom = new List<RoomModel>();
+
+                int bookingstart = int.Parse(DateTime.Parse(booking.StartDate.ToString()).ToString().Remove(10, 9).Remove(4, 1).Remove(6, 1)); //parsar datetime till int
+                int bookingend = int.Parse(DateTime.Parse(booking.EndDate.ToString()).ToString().Remove(10, 9).Remove(4, 1).Remove(6, 1)); //parsar datetime till int
+                int dateToday = int.Parse(DateTime.Parse(DateTime.Today.ToString()).ToString().Remove(10, 9).Remove(4, 1).Remove(6, 1));
+
+                if (bookingstart < bookingend && bookingstart >= dateToday) //kollar så bokningens start datum inte är efter slutdatum
                 {
-                    corcatroom.Add(item);    
-                }
-            }
-            List<RoomModel> CompareList = new List<RoomModel>();
-            foreach (var item in corcatroom) //loopar igenom bokningslistan
-            {
-                foreach (var element in bookinglist)
-                {
-                    if (element.RoomId == item.Id)
+                    corcatroom.AddRange(from item in roomList
+                                        where item.CategoryId == booking.CategoryId
+                                        select item);
+
+                    List<BookingModel> corcatbooking = new List<BookingModel>();
+
+                    //Används inte än men kan tas tag i imorgon.
+                    //BookingHandler.GetCorCatBookingList(bookingList, corcatbooking, booking.CategoryId); //Hämtar lista med enbart bokningar av korrekta kategori.
+                    //---------------------------------------------------------------------------------------------------------------------------------------------
+
+                    BookingHandler.RoomAvailableCheckV2(bookingList, corcatroom, bookingstart, bookingend);
+
+                    if (corcatroom.Count > 0) //kollar ifall det finns tillgängliga rum
                     {
-                        int start = int.Parse(DateTime.Parse(element.StartDate.ToString()).ToString().Remove(10, 9).Remove(4, 1).Remove(6, 1));
-                        int end = int.Parse(DateTime.Parse(element.EndDate.ToString()).ToString().Remove(10, 9).Remove(4, 1).Remove(6, 1));
-                        int bookingstart = int.Parse(DateTime.Parse(booking.StartDate.ToString()).ToString().Remove(10, 9).Remove(4, 1).Remove(6, 1));
-                        int bookingend = int.Parse(DateTime.Parse(booking.EndDate.ToString()).ToString().Remove(10, 9).Remove(4, 1).Remove(6, 1));
+                        var room = corcatroom.First();
+                        BookingModel finalBooking = BookingHandler.SetFinalBooking(booking, room);
 
+                        var postTask = ApiConnection.ApiClient.PostAsJsonAsync<BookingModel>("BookingModels", finalBooking);
+                        postTask.Wait();
 
-                        if ((start < bookingstart && end < bookingstart) || (start > bookingend && end > bookingend)) // testar tidsintervallet, finns ingen bokning lägg till rum i listan
-                        {
-                            qualifiedrooms.Add(item);
-                            break;
-                        }
-                        else
-                        {
-                            break;
-                        }
+                        var result = postTask.Result;
+                        return RedirectToAction("Confirmation", "Booking");
                     }
+
+
                     else
                     {
-                        CompareList.Add(item);  
+                        ViewData["norooms"] = "Det finns inga lediga rum av din preferenser";
+                        await ViewbagCategory();
+                        return View(new BookingModel());
                     }
-                    if (bookinglist.Count == CompareList.Count)
-                    {
-                        qualifiedrooms.Add(item);
-                        break;
-                    }
-
                 }
-                CompareList.Clear();
+                else
+                {
+                    ViewData["wrongtime"] = "Vänligen fyll i en korrekt tid. Slutdatumet måste vara senare än startdatumet.";
+                    await ViewbagCategory();
+                    return View(new BookingModel());
+                }
             }
-
-            // skapa bokning av rum som ligger först i listan Qualifiedrooms
-            int roomid = qualifiedrooms.First().Id;
-
-            HttpResponseMessage responseBooking = ApiConnection.ApiClient.GetAsync("BookingModels/" + roomid.ToString()).Result;
-            return View(new BookingModel());
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex.Message);
+                return View();
+            }
+        }
+        private async Task ViewbagCategory()
+        {
+            List<CategoryModel> categoryList = await ApiConnection.GetCategoryList();
+            ViewData["Desc"] = new SelectList(categoryList, "Id", "Description"); //för att fixa viewdata
+        }
+        public ActionResult Confirmation()
+        {
+            return View();
         }
     }
 }
