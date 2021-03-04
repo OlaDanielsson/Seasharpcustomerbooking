@@ -18,7 +18,7 @@ namespace Seasharpcustomerbooking.Controllers
             return View();
         }
 
-        public async Task<IActionResult> Create()
+        public async Task<IActionResult> Create(int Id, int GuestId)
         {
             try
             {
