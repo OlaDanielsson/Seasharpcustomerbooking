@@ -12,6 +12,7 @@ namespace Seasharpcustomerbooking.Models
         public DateTime EndDate { get; set; }
         public int RoomId { get; set; }
         public int GuestId { get; set; }
-        public List<CategoryModel> CategoryList { get; set; }
+        public int CategoryId { get; set; }
+        public string CatDescription { get; set; }
     }
 }
