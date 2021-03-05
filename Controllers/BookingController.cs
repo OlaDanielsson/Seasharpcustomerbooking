@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
 using Seasharpcustomerbooking.Models;
@@ -11,6 +12,8 @@ using System.Threading.Tasks;
 
 namespace Seasharpcustomerbooking.Controllers
 {
+    [Authorize]
+
     public class BookingController : Controller
     {
         public IActionResult Index()
