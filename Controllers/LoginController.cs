@@ -24,25 +24,25 @@ namespace Seasharpcustomerbooking.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Index(LoginModel login)
         {
-            GuestModel loginOk = null;// = new User();
+            GuestModel Guest = null;// = new User();
             using (var httpClient = new HttpClient())
             {
                 StringContent content = new StringContent(JsonConvert.SerializeObject(login), Encoding.UTF8, "application/json");
-                                                                
-                                                                //API-adress ej funktionell
-                using (var response = await httpClient.PostAsync("http://193.10.202.78/GuestAPI/api/Login", content))
+
+                                                                   //API-adress ej funktionell
+                using (var response = await httpClient.PostAsync("https://informatik8.ei.hv.se/GuestAPI/api/Login", content))
                 {
                     string apiResponse = await response.Content.ReadAsStringAsync();
-                    loginOk = JsonConvert.DeserializeObject<GuestModel>(apiResponse);
+                    Guest = JsonConvert.DeserializeObject<GuestModel>(apiResponse);
                 }
             }
 
-            if (loginOk.Id > 0)
+            if (Guest.Id > 0)
             {
-                await SetUserAuthenticated(loginOk);
+                await SetUserAuthenticated(Guest);
 
                 //Den ska inte vara med. Bara för att visa att det fungerar
-                return Redirect("~/Home/Index/");
+                return Redirect("~/Booking/Create/" + Guest.Id);
             }
             else
             {
@@ -51,11 +51,11 @@ namespace Seasharpcustomerbooking.Controllers
             }
         }
 
-        private async Task SetUserAuthenticated(GuestModel loginOk)
+        private async Task SetUserAuthenticated(GuestModel Guest)
         {
             //Inloggningsuppgifter stämmer, admin loggas in
             var identity = new ClaimsIdentity(CookieAuthenticationDefaults.AuthenticationScheme);
-            identity.AddClaim(new Claim(ClaimTypes.Name, loginOk.Status.ToString()));
+            identity.AddClaim(new Claim(ClaimTypes.Name, Guest.Id.ToString()));
 
             await HttpContext.SignInAsync(
                 CookieAuthenticationDefaults.AuthenticationScheme,

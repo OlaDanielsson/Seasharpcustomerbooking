@@ -13,7 +13,7 @@ namespace Seasharpcustomerbooking.Models
         public string Street_Adress { get; set; }
         public int PostalCode { get; set; }
         public string City { get; set; }
-        public int Phonenumber { get; set; }
+        public string Phonenumber { get; set; }
         public string E_Mail { get; set; }
         public string Type { get; set; }
         public string Status { get; set; }

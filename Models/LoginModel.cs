@@ -7,7 +7,7 @@ namespace Seasharpcustomerbooking.Models
 {
     public class LoginModel
     {
-        public string Username { get; set; }
+        public string E_Mail { get; set; }
         public string Password { get; set; }
     }
 }
