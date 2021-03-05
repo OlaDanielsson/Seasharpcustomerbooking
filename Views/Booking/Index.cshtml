@@ -49,7 +49,7 @@
                 @Html.DisplayFor(modelItem => item.GuestId)
             </td>
             <td>
-                @Html.ActionLink("Edit", "Edit", new { Id = item.Id, GuestId = item.GuestId /* id=item.PrimaryKey */ }) |
+                @Html.ActionLink("Edit", "Edit", new { Id = item.GuestId /* id=item.PrimaryKey */ }) |
                 @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
                 @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
             </td>

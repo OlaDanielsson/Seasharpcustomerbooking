@@ -18,7 +18,7 @@ namespace Seasharpcustomerbooking.Controllers
             return View();
         }
 
-        public async Task<IActionResult> Create(int Id, int GuestId)
+        public async Task<IActionResult> Create(int Id)
         {
             try
             {
@@ -26,8 +26,13 @@ namespace Seasharpcustomerbooking.Controllers
 
                 ViewData["Desc"] = new SelectList(categoryList, "Id", "Description"); //för att fixa viewdata
                 HttpResponseMessage responseRoom = ApiConnection.ApiClient.GetAsync("CategoryModels/").Result;
-
-                return View(new BookingModel());
+                BookingModel bookingmodel = new BookingModel();
+                DateTime today;
+                today = DateTime.Today;
+                bookingmodel.GuestId = Id;
+                bookingmodel.StartDate = today;
+                bookingmodel.EndDate = today;
+                return View(bookingmodel);
             }
             catch (Exception ex)
             {
@@ -36,7 +41,8 @@ namespace Seasharpcustomerbooking.Controllers
             }
         }
         [HttpPost]
-        public async Task<IActionResult> Create(BookingModel booking)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(int id,int GuestId, [Bind("CategoryId, StartDate, EndDate, GuestId")] BookingModel booking)
         {
             try
             {
