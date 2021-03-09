@@ -49,7 +49,7 @@ namespace Seasharpcustomerbooking.Controllers
         {
             try
             {
-                List<CategoryModel> categoryList = await ApiConnection.GetCategoryList();
+                //List<CategoryModel> categoryList = await ApiConnection.GetCategoryList();
                 List<RoomModel> roomList = await ApiConnection.GetRoomList();
                 List<BookingModel> bookingList = await ApiConnection.GetBookingList();
 

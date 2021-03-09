@@ -29,7 +29,7 @@ namespace Seasharpcustomerbooking.Controllers
             {
                 StringContent content = new StringContent(JsonConvert.SerializeObject(login), Encoding.UTF8, "application/json");
 
-                                                                   //API-adress ej funktionell
+                                                                   
                 using (var response = await httpClient.PostAsync("https://informatik8.ei.hv.se/GuestAPI/api/Login", content))
                 {
                     string apiResponse = await response.Content.ReadAsStringAsync();
@@ -41,7 +41,7 @@ namespace Seasharpcustomerbooking.Controllers
             {
                 await SetUserAuthenticated(Guest);
 
-                //Den ska inte vara med. Bara för att visa att det fungerar
+                
                 return Redirect("~/Booking/Create/" + Guest.Id);
             }
             else
