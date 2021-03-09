@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 
 namespace Seasharpcustomerbooking
 {
@@ -24,6 +25,7 @@ namespace Seasharpcustomerbooking
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+            services.AddSession();
             // Lägg till stöd för loginfunktionen. OBS LoginPath!
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                     .AddCookie(options => { options.LoginPath = "/Login/Index/"; });
@@ -48,7 +50,7 @@ namespace Seasharpcustomerbooking
             app.UseRouting();
 
             app.UseAuthorization();
-
+            app.UseSession();
 
 
             app.UseEndpoints(endpoints =>

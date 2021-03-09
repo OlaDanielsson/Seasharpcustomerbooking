@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Seasharpcustomerbooking.Models;
@@ -15,8 +16,9 @@ namespace Seasharpcustomerbooking.Controllers
 {
     public class LoginController : Controller
     {
-        public IActionResult Index()
+        public IActionResult Index(string msg)
         {
+            ViewBag.Errormsg = msg;
             return View();
         }
 
@@ -37,12 +39,14 @@ namespace Seasharpcustomerbooking.Controllers
                 }
             }
 
-            if (Guest.Id > 0)
+            if (Guest != null)
             {
                 await SetUserAuthenticated(Guest);
 
-                
-                return Redirect("~/Booking/Create/" + Guest.Id);
+                var str = JsonConvert.SerializeObject(Guest);
+                HttpContext.Session.SetString("GuestSession", str);
+
+                return Redirect("~/Booking/Create/");
             }
             else
             {
