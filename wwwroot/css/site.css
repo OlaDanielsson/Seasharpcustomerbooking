@@ -59,8 +59,11 @@ html {
 }
 
 body {
-  /* Margin bottom by footer height */
-  margin-bottom: 60px;
+    /* Margin bottom by footer height */
+    margin-bottom: 60px;
+    background-image: url(http://193.10.202.77/images/hotelbilden.jpg);
+    background-repeat: no-repeat;
+    background-size: 100%;
 }
 .footer {
   position: absolute;
@@ -68,4 +71,11 @@ body {
   width: 100%;
   white-space: nowrap;
   line-height: 60px; /* Vertically center the text there */
+}
+
+.form-background {
+    padding: 20px;
+    background-color: #FFFFFF;
+    border-radius: 25px;
+    flex-wrap: wrap;
 }

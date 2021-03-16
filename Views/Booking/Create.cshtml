@@ -5,13 +5,12 @@
 }
 
 
-@ViewData["wrongtime"]
-@ViewData["norooms"]
-
 
 <hr />
-<div class="row">
+<div class="row form-background">   
     <div class="col-md-4">
+        @ViewData["wrongtime"]
+        @ViewData["norooms"]
         <p>Välkommen @ViewBag.GuestBag</p>
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>

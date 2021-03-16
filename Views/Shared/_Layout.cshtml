@@ -12,7 +12,7 @@
     <img class="kund" src="http://193.10.202.77/images/kund.jpg" />
     <p style="text-align: right">Kundservice</p>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light border-bottom box-shadow mb-3" style="background-color:coral; opacity:0.6; width: 100%;">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light border-bottom box-shadow mb-3" style="background:rgba(255,127,80,0.6); width:100%;">
             <h1 class="rubrik1">Hotell SeaSharp</h1>
 
             <div class="container">
@@ -24,41 +24,23 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">HEM</a>
+                            <a class="nav-link text-dark" style="font-weight:bold" href=" http://193.10.202.78/PublishGuestAdmin">GÄSTADMIN</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Booking" asp-action="Create">BOKA RUM</a>
+                            <a class="nav-link text-dark" style="font-weight:bold" asp-area="" asp-controller="" asp-action="Index">KONFERENSER</a>
                         </li>
                         @*<li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Login" asp-action="SignOut">Logga ut</a>
+                        <a class="nav-link text-dark" style="font-weight:bold" href="http://193.10.202.81/Seasharp">BOKA RUM</a>
                         </li>*@
-                        @*<li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Login" asp-action="SignOut">Sign out</a>
-                        </li>*@
-                        <!-- Länk till grupp 2 -->
                         <li class="nav-item">
-                            <a class="nav-link text-dark" href="http://193.10.202.78/GuestWebSite">GÄST</a>
+                            <a class="nav-link text-dark" style="font-weight:bold" asp-area="" asp-controller="Booking" asp-action="Create">BOKA RUM</a>
                         </li>
-                        <!-- Länk till grupp 4-->
-                        @*<li class="nav-item">
-                            <a class="nav-link text-dark" style="font-weight:bold" asp-area="" asp-controller="Booking" asp-action="Index">RUM</a>
-                        </li>*@
-                        <!-- Länk till grupp 1-->
-                        @*<li class="nav-item">
-                            <a class="nav-link text-dark" href="http://informatik7.ei.hv.se">KONFERENSRUM</a>
-                        </li>*@
-                        <!-- Länk till grupp 1-->
                         <li class="nav-item">
-                            <a class="nav-link text-dark" href="http://informatik7.ei.hv.se">KONFERENSER</a>
+                            <a class="nav-link text-dark" style="font-weight:bold" href=" http://informatik12.ei.hv.se/resakt/Admin">RESTAURANG</a>
                         </li>
-                        <!-- Länk till grupp 5-->
                         <li class="nav-item">
-                            <a class="nav-link text-dark" href="http://informatik12.ei.hv.se/resakt">RESTAURANG/AKTIVITETER</a>
+                            <a class="nav-link text-dark" style="font-weight:bold" href=" http://informatik12.ei.hv.se/resakt/Admin">AKTIVITETER</a>
                         </li>
-                        <!-- Länk till grupp 5-->
-                        @*<li class="nav-item">
-                            <a class="nav-link text-dark" href="http://informatik12.ei.hv.se"></a>
-                        </li>*@
                         <li class="nav-item">
                             <a class="nav-link text-dark" style="font-weight:bold" asp-area="" asp-controller="Login" asp-action="Index">Logga in</a>
                         </li>
@@ -76,7 +58,6 @@
             @RenderBody()
         </main>
     </div>
-    <img class="bild" src="http://193.10.202.77/images/hotelbilden.jpg" width="1400" height="900" align="middle" margin-left="auto" margin-right="auto" />
     <footer class="border-top footer text-muted">
         <div class="container">
             &copy; 2021 - Hotell SeaSharp - <a asp-area="" asp-controller="Home" asp-action="Index">Till första sidan</a>
