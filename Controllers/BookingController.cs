@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Seasharpcustomerbooking.Models;
 using System;
@@ -17,6 +18,13 @@ namespace Seasharpcustomerbooking.Controllers
 
     public class BookingController : Controller
     {
+        private readonly ILogger<BookingModel> logger;
+
+        public BookingController(ILogger<BookingController> logger)
+        {
+            this.logger = (ILogger<BookingModel>)logger;
+        }
+
         public IActionResult Index()
         {
             return View();
@@ -51,6 +59,7 @@ namespace Seasharpcustomerbooking.Controllers
             }
             catch (Exception ex)
             {
+                logger.LogWarning("Couldn't book a room.");
                 System.Diagnostics.Debug.WriteLine(ex.Message);
                 return View();
             }
@@ -122,6 +131,7 @@ namespace Seasharpcustomerbooking.Controllers
             }
             catch (Exception ex)
             {
+                logger.LogWarning("Couldn't book a room.");
                 System.Diagnostics.Debug.WriteLine(ex.Message);
                 return View();
             }
