@@ -14,5 +14,6 @@ namespace Seasharpcustomerbooking.Models
         public int GuestId { get; set; }
         public int CategoryId { get; set; }
         public string CatDescription { get; set; }
+        public int Price { get; set; }
     }
 }

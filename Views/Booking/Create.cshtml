@@ -5,9 +5,8 @@
 }
 
 
-
 <hr />
-<div class="row form-background">   
+<div class="row form-background">
     <div class="col-md-4">
         @ViewData["wrongtime"]
         @ViewData["norooms"]
@@ -33,6 +32,21 @@
                 <input type="submit" value="Boka" class="btn btn-primary" />
             </div>
         </form>
+    </div>
+    <div class="ml-auto mr-5">
+        <table class="border border-5 border-dark">
+            <tr>
+                <th>Typ av rum    |  </th>
+                <th>Pris</th>
+            </tr>                      
+            @foreach (var item in (IEnumerable<CategoryModel>)ViewData["Price"])
+            {
+                <tr>
+                    <td>@item.Description:  </td>                   
+                    <td>@item.Price kr</td>
+                </tr>                    
+            }                       
+        </table>
     </div>
 </div>
 

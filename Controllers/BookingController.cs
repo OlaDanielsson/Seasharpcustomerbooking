@@ -18,11 +18,11 @@ namespace Seasharpcustomerbooking.Controllers
 
     public class BookingController : Controller
     {
-        private readonly ILogger<BookingModel> logger;
+        private readonly ILogger<BookingController> _logger;
 
         public BookingController(ILogger<BookingController> logger)
         {
-            this.logger = (ILogger<BookingModel>)logger;
+            _logger = logger;
         }
 
         public IActionResult Index()
@@ -46,8 +46,10 @@ namespace Seasharpcustomerbooking.Controllers
                 ViewBag.GuestBag = obj.Firstname + " " + obj.Lastname;
 
                 List<CategoryModel> categoryList = await ApiConnection.GetCategoryList();
-
                 ViewData["Desc"] = new SelectList(categoryList, "Id", "Description"); //för att fixa viewdata
+
+                ViewData["Price"] = categoryList; //för att fixa viewdata
+
                 HttpResponseMessage responseRoom = ApiConnection.ApiClient.GetAsync("CategoryModels/").Result;
                 BookingModel bookingmodel = new BookingModel();
                 DateTime today;
@@ -59,7 +61,7 @@ namespace Seasharpcustomerbooking.Controllers
             }
             catch (Exception ex)
             {
-                logger.LogWarning("Couldn't book a room.");
+                _logger.LogWarning("Couldn't book a room.");
                 System.Diagnostics.Debug.WriteLine(ex.Message);
                 return View();
             }
@@ -131,7 +133,7 @@ namespace Seasharpcustomerbooking.Controllers
             }
             catch (Exception ex)
             {
-                logger.LogWarning("Couldn't book a room.");
+                _logger.LogWarning("Couldn't book a room.");
                 System.Diagnostics.Debug.WriteLine(ex.Message);
                 return View();
             }
