@@ -7,15 +7,18 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link href="http://193.10.202.77/css/HotelSeasharp.css" rel="stylesheet" />
     <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet" href="~/css/HotelSeasharp.css" />
+
+
 </head>
 <body>
-    <img class="kund" src="http://193.10.202.77/images/kund.jpg" />
-    <p style="text-align: right">Kundservice</p>
+
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light border-bottom box-shadow mb-3" style="background:rgba(255,127,80,0.6); width:100%;">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light border-bottom box-shadow mb-3" style=" background-color: lightgrey; background: rgba(211, 211, 211, 0.8); height: 40%;
+        width: 100%;">
             <h1 class="rubrik1">Hotell SeaSharp</h1>
 
-            <div class="container">
+            <div class="containeruppe">
                 @*<a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Hotell SeaSharp</a>*@
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
@@ -50,15 +53,27 @@
         </nav>
     </header>
     <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
+        @*<main role="main" class="pb-3">*@
+        @RenderBody()
+        @*</main>*@
     </div>
-    <footer class="border-top footer text-muted">
-        <div class="container">
+    <div>
+        @*<img class="bild" src="http://193.10.202.77/images/hotelbilden.jpg" width="1400" height="900" align="middle" margin-left="auto" margin-right="auto" />*@
+    </div>
+
+
+    @*<footer class="border-top footer text-muted">
+            <div class="containernere">
+                &copy; 2021 - Hotell SeaSharp - <a asp-area="" asp-controller="Home" asp-action="Index">Till första sidan</a>
+            </div>
+        </footer>*@
+
+    <footer class="bottenFooter">
+        <div class="containernere">
             &copy; 2021 - Hotell SeaSharp - <a href="http://193.10.202.78/GuestWebSite">Till första sidan</a>
         </div>
     </footer>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
