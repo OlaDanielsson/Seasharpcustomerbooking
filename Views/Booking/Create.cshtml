@@ -4,6 +4,7 @@
     ViewData["Title"] = "Create";
 }
 
+<link href="~/css/site.css" rel="stylesheet" />
 
 <hr />
 <div class="row form-background">
@@ -35,17 +36,32 @@
     </div>
     <div class="ml-auto mr-5">
         <table class="border border-5 border-dark">
-            <tr>
-                <th>Typ av rum    |  </th>
-                <th>Pris</th>
-            </tr>                      
-            @foreach (var item in (IEnumerable<CategoryModel>)ViewData["Price"])
-            {
+            <thead class="thead-dark">
                 <tr>
-                    <td>@item.Description:  </td>                   
-                    <td>@item.Price kr</td>
-                </tr>                    
-            }                       
+                    <th class="paddingtext">Typ av rum</th>
+                    <th class="paddingtext">Pris </th>
+                    <th class="paddingtext">Bild</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in (IEnumerable<CategoryModel>)ViewData["Price"])
+                {
+                    <tr>
+                        <td class="paddingtext">
+                            @item.Description:
+                        </td>
+                        <td class="paddingtext">
+                            @item.Price kr
+                        </td>
+                        <td>
+                            <a href="@item.Path">
+                                <img src="@item.Path" style="height: 79px; padding: 3px" />
+                            </a>
+                        </td>
+                    </tr>
+
+                }
+            </tbody>           
         </table>
     </div>
 </div>

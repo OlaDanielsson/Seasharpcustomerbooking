@@ -10,10 +10,10 @@ namespace Seasharpcustomerbooking.Models
     {
         public int Id { get; set; }
         public string Description { get; set; }
-        public byte[] ImgList { get; set; } //lista av bilder som är direkt kopplat till den kategorin
+        public string Image { get; set; } //lista av bilder som är direkt kopplat till den kategorin
         public int NumberOfBeds { get; set; }
         public int Price { get; set; } // räcker int eller ska man ta en annna typ av variabel?
-
+        public string Path { get; set; }
         [NotMapped]
         public Microsoft.AspNetCore.Http.IFormFile uploadedimg { get; set; } //för att lägga till bilder
     }

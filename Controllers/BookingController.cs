@@ -48,6 +48,11 @@ namespace Seasharpcustomerbooking.Controllers
                 List<CategoryModel> categoryList = await ApiConnection.GetCategoryList();
                 ViewData["Desc"] = new SelectList(categoryList, "Id", "Description"); //för att fixa viewdata
 
+                foreach (var item in categoryList)
+                {
+                    item.Path = "http://193.10.202.81/Uploads/" + item.Image;
+                }
+
                 ViewData["Price"] = categoryList; //för att fixa viewdata
 
                 HttpResponseMessage responseRoom = ApiConnection.ApiClient.GetAsync("CategoryModels/").Result;
