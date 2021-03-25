@@ -82,6 +82,7 @@ namespace Seasharpcustomerbooking.Controllers
 
                 List<RoomModel> roomList = await ApiConnection.GetRoomList();
                 List<BookingModel> bookingList = await ApiConnection.GetBookingList();
+                List<CategoryModel> categoryList = await ApiConnection.GetCategoryList();
 
                 List<RoomModel> qualifiedrooms = new List<RoomModel>();
                 List<RoomModel> corcatroom = new List<RoomModel>();
@@ -116,6 +117,13 @@ namespace Seasharpcustomerbooking.Controllers
                     {
                         ViewBag.GuestBag = obj.Firstname + " " + obj.Lastname;
                         ViewData["norooms"] = "Det finns inga lediga rum av din preferenser";
+                        
+                        foreach (var item in categoryList)
+                        {
+                            item.Path = "http://193.10.202.81/Uploads/" + item.Image;
+                        }
+
+                        ViewData["Price"] = categoryList; //för att fixa viewdata
                         await ViewbagCategory();
                         return View(new BookingModel());
                     }
@@ -125,10 +133,22 @@ namespace Seasharpcustomerbooking.Controllers
                     if(bookingstart < dateToday)
                     {
                         ViewData["wrongtime"] = "Om du inte har en tidsmaskin, kan du endast boka dagens datum och framåt.";
+                        foreach (var item in categoryList)
+                        {
+                            item.Path = "http://193.10.202.81/Uploads/" + item.Image;
+                        }
+
+                        ViewData["Price"] = categoryList; //för att fixa viewdata
                     }
                     else
                     {
                         ViewData["wrongtime"] = "Vänligen fyll i en korrekt tid. Slutdatumet måste vara senare än startdatumet.";
+                        foreach (var item in categoryList)
+                        {
+                            item.Path = "http://193.10.202.81/Uploads/" + item.Image;
+                        }
+
+                        ViewData["Price"] = categoryList; //för att fixa viewdata
                     }
 
                     ViewBag.GuestBag = obj.Firstname + " " + obj.Lastname;

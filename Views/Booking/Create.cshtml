@@ -44,7 +44,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var item in (IEnumerable<CategoryModel>)ViewData["Price"])
+                @foreach (var item in (IEnumerable<CategoryModel>)ViewData["Price"]) //HÄR CRASHAR DET
                 {
                     <tr>
                         <td class="paddingtext">
@@ -59,7 +59,6 @@
                             </a>
                         </td>
                     </tr>
-
                 }
             </tbody>           
         </table>
