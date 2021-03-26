@@ -3,15 +3,23 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Seasharpcustomerbooking</title>
+    <title>@ViewData["Title"] Hotell Seasharp</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link href="http://193.10.202.77/css/HotelSeasharp.css" rel="stylesheet" />
     <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet" href="~/css/HotelSeasharp.css" />
+
+
 </head>
 <body>
+
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Seasharpcustomerbooking</a>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light border-bottom box-shadow mb-3" style=" background-color: lightgrey; background: rgba(211, 211, 211, 0.8); height: 40%;
+        width: 100%;">
+            <h1 class="rubrik1">Hotell SeaSharp</h1>
+
+            <div class="containeruppe">
+                @*<a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Hotell SeaSharp</a>*@
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -19,33 +27,57 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link text-dark" style="font-weight:bold" href="http://193.10.202.78/GuestWebSite">HEM</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Booking" asp-action="Create">Skapa bokning</a>
+                            <a class="nav-link text-dark" style="font-weight:bold" href="http://193.10.202.81/Seasharp/Booking/Create">BOKA RUM</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Login" asp-action="SignOut">Logga ut</a>
+                            <a class="nav-link text-dark" style="font-weight:bold" href="http://informatik12.ei.hv.se/resakt">RESTAURANG OCH AKTIVITETER</a>
                         </li>
+                        @if (User?.Identity.IsAuthenticated == true)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" style="font-weight:bold" asp-area="" asp-controller="Login" asp-action="SignOut">Logga ut</a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" style="font-weight:bold" asp-area="" asp-controller="Login" asp-action="Index">Logga in</a>
+                            </li>
+                        }
                     </ul>
                 </div>
             </div>
         </nav>
     </header>
     <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
+        @*<main role="main" class="pb-3">*@
+        @RenderBody()
+        @*</main>*@
+    </div>
+    <div>
+        @*<img class="bild" src="http://193.10.202.77/images/hotelbilden.jpg" width="1400" height="900" align="middle" margin-left="auto" margin-right="auto" />*@
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2021 - Seasharpcustomerbooking - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+
+    @*<footer class="border-top footer text-muted">
+            <div class="containernere">
+                &copy; 2021 - Hotell SeaSharp - <a asp-area="" asp-controller="Home" asp-action="Index">Till första sidan</a>
+            </div>
+        </footer>*@
+
+    <footer class="bottenFooter">
+        <div class="containernere">
+            &copy; 2021 - Hotell SeaSharp - <a href="http://193.10.202.78/GuestWebSite">Till första sidan</a>
         </div>
     </footer>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
+
 </body>
 </html>

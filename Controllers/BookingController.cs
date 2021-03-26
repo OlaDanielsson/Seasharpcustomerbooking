@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Seasharpcustomerbooking.Models;
 using System;
@@ -16,42 +18,71 @@ namespace Seasharpcustomerbooking.Controllers
 
     public class BookingController : Controller
     {
+        private readonly ILogger<BookingController> _logger;
+
+        public BookingController(ILogger<BookingController> logger)
+        {
+            _logger = logger;
+        }
+
         public IActionResult Index()
         {
             return View();
         }
 
-        public async Task<IActionResult> Create(int Id)
+        public async Task<IActionResult> Create()
         {
             try
             {
-                List<CategoryModel> categoryList = await ApiConnection.GetCategoryList();
+                var str = HttpContext.Session.GetString("GuestSession");              
 
+                if(String.IsNullOrEmpty(str))
+                {
+                    SignOut();
+                    return RedirectToAction("Index", "Login", new {msg = "Något gick fel, logga in igen"});
+                }
+
+                var obj = JsonConvert.DeserializeObject<GuestModel>(str);
+                ViewBag.GuestBag = obj.Firstname + " " + obj.Lastname;
+
+                List<CategoryModel> categoryList = await ApiConnection.GetCategoryList();
                 ViewData["Desc"] = new SelectList(categoryList, "Id", "Description"); //för att fixa viewdata
+
+                foreach (var item in categoryList)
+                {
+                    item.Path = "http://193.10.202.81/Uploads/" + item.Image;
+                }
+
+                ViewData["Price"] = categoryList; //för att fixa viewdata
+
                 HttpResponseMessage responseRoom = ApiConnection.ApiClient.GetAsync("CategoryModels/").Result;
                 BookingModel bookingmodel = new BookingModel();
                 DateTime today;
                 today = DateTime.Today;
-                bookingmodel.GuestId = Id;
                 bookingmodel.StartDate = today;
                 bookingmodel.EndDate = today;
+
                 return View(bookingmodel);
             }
             catch (Exception ex)
             {
+                _logger.LogWarning("Couldn't book a room.");
                 System.Diagnostics.Debug.WriteLine(ex.Message);
                 return View();
             }
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(int id,int GuestId, [Bind("CategoryId, StartDate, EndDate, GuestId")] BookingModel booking)
+        public async Task<IActionResult> Create(int id, [Bind("CategoryId, StartDate, EndDate, GuestId")] BookingModel booking)
         {
             try
             {
-                List<CategoryModel> categoryList = await ApiConnection.GetCategoryList();
+                var str = HttpContext.Session.GetString("GuestSession");
+                var obj = JsonConvert.DeserializeObject<GuestModel>(str);
+
                 List<RoomModel> roomList = await ApiConnection.GetRoomList();
                 List<BookingModel> bookingList = await ApiConnection.GetBookingList();
+                List<CategoryModel> categoryList = await ApiConnection.GetCategoryList();
 
                 List<RoomModel> qualifiedrooms = new List<RoomModel>();
                 List<RoomModel> corcatroom = new List<RoomModel>();
@@ -68,16 +99,12 @@ namespace Seasharpcustomerbooking.Controllers
 
                     List<BookingModel> corcatbooking = new List<BookingModel>();
 
-                    //Används inte än men kan tas tag i imorgon.
-                    //BookingHandler.GetCorCatBookingList(bookingList, corcatbooking, booking.CategoryId); //Hämtar lista med enbart bokningar av korrekta kategori.
-                    //---------------------------------------------------------------------------------------------------------------------------------------------
-
                     BookingHandler.RoomAvailableCheckV2(bookingList, corcatroom, bookingstart, bookingend);
 
                     if (corcatroom.Count > 0) //kollar ifall det finns tillgängliga rum
                     {
                         var room = corcatroom.First();
-                        BookingModel finalBooking = BookingHandler.SetFinalBooking(booking, room);
+                        BookingModel finalBooking = BookingHandler.SetFinalBooking(booking, room, obj);
 
                         var postTask = ApiConnection.ApiClient.PostAsJsonAsync<BookingModel>("BookingModels", finalBooking);
                         postTask.Wait();
@@ -86,23 +113,52 @@ namespace Seasharpcustomerbooking.Controllers
                         return RedirectToAction("Confirmation", "Booking");
                     }
 
-
                     else
                     {
+                        ViewBag.GuestBag = obj.Firstname + " " + obj.Lastname;
                         ViewData["norooms"] = "Det finns inga lediga rum av din preferenser";
+                        
+                        foreach (var item in categoryList)
+                        {
+                            item.Path = "http://193.10.202.81/Uploads/" + item.Image;
+                        }
+
+                        ViewData["Price"] = categoryList; //för att fixa viewdata
                         await ViewbagCategory();
                         return View(new BookingModel());
                     }
                 }
                 else
                 {
-                    ViewData["wrongtime"] = "Vänligen fyll i en korrekt tid. Slutdatumet måste vara senare än startdatumet.";
+                    if(bookingstart < dateToday)
+                    {
+                        ViewData["wrongtime"] = "Om du inte har en tidsmaskin, kan du endast boka dagens datum och framåt.";
+                        foreach (var item in categoryList)
+                        {
+                            item.Path = "http://193.10.202.81/Uploads/" + item.Image;
+                        }
+
+                        ViewData["Price"] = categoryList; //för att fixa viewdata
+                    }
+                    else
+                    {
+                        ViewData["wrongtime"] = "Vänligen fyll i en korrekt tid. Slutdatumet måste vara senare än startdatumet.";
+                        foreach (var item in categoryList)
+                        {
+                            item.Path = "http://193.10.202.81/Uploads/" + item.Image;
+                        }
+
+                        ViewData["Price"] = categoryList; //för att fixa viewdata
+                    }
+
+                    ViewBag.GuestBag = obj.Firstname + " " + obj.Lastname;
                     await ViewbagCategory();
                     return View(new BookingModel());
                 }
             }
             catch (Exception ex)
             {
+                _logger.LogWarning("Couldn't book a room.");
                 System.Diagnostics.Debug.WriteLine(ex.Message);
                 return View();
             }

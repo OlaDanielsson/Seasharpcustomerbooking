@@ -1,4 +1,6 @@
-﻿using Seasharpcustomerbooking.Models;
+﻿using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json;
+using Seasharpcustomerbooking.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,14 +31,15 @@ namespace Seasharpcustomerbooking
                 }
             }
         }
-        public static BookingModel SetFinalBooking(BookingModel booking, RoomModel room)
+
+        public static BookingModel SetFinalBooking(BookingModel booking, RoomModel room, GuestModel str)
         {
             BookingModel finalBooking = new BookingModel();
             finalBooking.Id = booking.Id;
             finalBooking.StartDate = booking.StartDate;
             finalBooking.EndDate = booking.EndDate;
             finalBooking.RoomId = room.Id;
-            finalBooking.GuestId = booking.GuestId;
+            finalBooking.GuestId = str.Id;
             return finalBooking;
         }
     }

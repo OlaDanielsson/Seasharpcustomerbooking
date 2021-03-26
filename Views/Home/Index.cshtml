@@ -1,8 +1,139 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Seasharp";
 }
+<link href="http://193.10.202.77/css/HotelSeasharp.css" rel="stylesheet" />
+<link rel="stylesheet" href="~/css/site.css" />
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<body>
+    <div class="slideshow-container">
+
+        <div class="mySlides fade">
+            <div class="numbertext">1 / 8</div>
+            <img src="http://193.10.202.77/images/bild1.jpg" style="width:100%" />
+        </div>
+
+        <div class="mySlides fade">
+            <div class="numbertext">2 / 8</div>
+            <img src="http://193.10.202.77/images/bild2.jpg" style="width:100%" />
+        </div>
+
+        <div class="mySlides fade">
+            <div class="numbertext">3 / 8</div>
+            <img src="http://193.10.202.77/images/bild3.jpg" style="width:100%" />
+        </div>
+
+        <div class="mySlides fade">
+            <div class="numbertext">4 / 8</div>
+            <img src="http://193.10.202.77/images/bild4.jpg" style="width:100%" />
+        </div>
+
+        <div class="mySlides fade">
+            <div class="numbertext">5 / 8</div>
+            <img src="http://193.10.202.77/images/bild5.jpg" style="width:100%" />
+        </div>
+
+        <div class="mySlides fade">
+            <div class="numbertext">6 / 8</div>
+            <img src="http://193.10.202.77/images/bild6.jpg" style="width:100%" />
+        </div>
+
+        <div class="mySlides fade">
+            <div class="numbertext">7 / 8</div>
+            <img src="http://193.10.202.77/images/bild7.jpg" style="width:100%" />
+        </div>
+
+        <div class="mySlides fade">
+            <div class="numbertext">8 / 8</div>
+            <img src="http://193.10.202.77/images/reception.jpg" style="width:100%" />
+        </div>
+
+    </div>
+    <br>
+
+    <div style="text-align:center">
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+    </div>
+
+    <script>
+        var slideIndex = 0;
+        showSlides();
+
+        function showSlides() {
+            var i;
+            var slides = document.getElementsByClassName("mySlides");
+            var dots = document.getElementsByClassName("dot");
+            for (i = 0; i < slides.length; i++) {
+                slides[i].style.display = "none";
+            }
+            slideIndex++;
+            if (slideIndex > slides.length) { slideIndex = 1 }
+            for (i = 0; i < dots.length; i++) {
+                dots[i].className = dots[i].className.replace(" active", "");
+            }
+            slides[slideIndex - 1].style.display = "block";
+            dots[slideIndex - 1].className += " active";
+            setTimeout(showSlides, 5000); // Change image every 5 seconds
+        }
+    </script>
+    <br />
+    <div class="välkommen">
+        <h1>Varmt Välkomna till Hotell SeaSharp!</h1>
+    </div>
+    <hr class="streck">
+
+    <br />
+    <div class="erbjudande">
+        Här på Hotell SeaSharp erbjuder vi våra gäster allt från övernattning med frukostbuffé <br />
+        till hotellpaket med inträde till någon rolig aktivivtet som passar såväl barnfamiljer <br />
+        som för dig som reser utan barn.
+    </div>
+    <br />
+    <div class="hotellinfo">
+        <h2>Vi älskar våra gäster!</h2><br />
+        Hotell SeaSharp, Restaurang och Konferens Center ägs och förvaltas av Jan-Olof som har en lång och gedigen erfarenhet av restaurang- och hotellbranschen.
+        Efter många år av gemensamma projekt i Sverige och utomlands bildar han ett mycket nära team av proffs. <br /> <br />
+        Vår restaurang bedrivs av Anton som har varit i branschen i mer än 35 år.Han är en framgångsrik kock i många välkända anläggningar över hela landet.
+        Förutom att han är huvudansvarig för att driva Restaurang SeaSharp är han ofta engagerad som aktivitetsanordnare, ceremonimästare och som medlem i juryn vid tävlingar.
+
+        Hans broder Tobias är han också involverad i produktutveckling för företag inom livsmedelsindustrin.
+    </div>
+
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+
+    <div class="kontaktaoss">
+        <h1>Kontakta oss</h1>
+        Det är Jan-Olof, tillsammans med sin personal som enligt traditioner styr Hotell Seasharp <br />
+        För att kontakta ledningen så har du kommit rätt <br />
+        Slå en signal! <br />
+        + 46 723 974 90 <br />
+        461 58 Trollhättan
+    </div>
+
+</body>
+
+
+
+
+
+
+
+
+

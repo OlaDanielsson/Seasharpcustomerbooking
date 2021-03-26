@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Seasharpcustomerbooking.Models;
 using System;
@@ -15,8 +17,15 @@ namespace Seasharpcustomerbooking.Controllers
 {
     public class LoginController : Controller
     {
-        public IActionResult Index()
+        private readonly ILogger<LoginController> logger;
+
+        public LoginController(ILogger<LoginController> logger)
         {
+            this.logger = (ILogger<LoginController>)logger;
+        }
+        public IActionResult Index(string msg)
+        {
+            ViewBag.Errormsg = msg;
             return View();
         }
 
@@ -24,48 +33,78 @@ namespace Seasharpcustomerbooking.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Index(LoginModel login)
         {
-            GuestModel Guest = null;// = new User();
-            using (var httpClient = new HttpClient())
-            {
-                StringContent content = new StringContent(JsonConvert.SerializeObject(login), Encoding.UTF8, "application/json");
 
-                                                                   //API-adress ej funktionell
-                using (var response = await httpClient.PostAsync("https://informatik8.ei.hv.se/GuestAPI/api/Login", content))
+            try
+            {
+                GuestModel Guest = null;// = new User();
+                using (var httpClient = new HttpClient())
                 {
-                    string apiResponse = await response.Content.ReadAsStringAsync();
-                    Guest = JsonConvert.DeserializeObject<GuestModel>(apiResponse);
+                    StringContent content = new StringContent(JsonConvert.SerializeObject(login), Encoding.UTF8, "application/json");
+
+
+                    using (var response = await httpClient.PostAsync("https://informatik8.ei.hv.se/GuestAPI/api/Login", content))
+                    {
+                        string apiResponse = await response.Content.ReadAsStringAsync();
+                        Guest = JsonConvert.DeserializeObject<GuestModel>(apiResponse);
+                    }
+                }
+
+                if (Guest != null)
+                {
+                    await SetUserAuthenticated(Guest);
+
+                    var str = JsonConvert.SerializeObject(Guest);
+                    HttpContext.Session.SetString("GuestSession", str);
+
+                    return Redirect("~/Booking/Create/");
+                }
+                else
+                {
+                    ViewData["failedlogin"] = "Inloggningen misslyckades";
+                    return View();
                 }
             }
-
-            if (Guest.Id > 0)
+            catch (Exception ex)
             {
-                await SetUserAuthenticated(Guest);
-
-                //Den ska inte vara med. Bara för att visa att det fungerar
-                return Redirect("~/Booking/Create/" + Guest.Id);
-            }
-            else
-            {
-                ViewData["failedlogin"] = "Inloggningen misslyckades";
+                logger.LogWarning("Couldn't login.");
+                System.Diagnostics.Debug.WriteLine(ex.Message);
                 return View();
             }
         }
 
         private async Task SetUserAuthenticated(GuestModel Guest)
         {
-            //Inloggningsuppgifter stämmer, admin loggas in
-            var identity = new ClaimsIdentity(CookieAuthenticationDefaults.AuthenticationScheme);
-            identity.AddClaim(new Claim(ClaimTypes.Name, Guest.Id.ToString()));
+            try
+            {
+                //Inloggningsuppgifter stämmer, admin loggas in
+                var identity = new ClaimsIdentity(CookieAuthenticationDefaults.AuthenticationScheme);
+                identity.AddClaim(new Claim(ClaimTypes.Name, Guest.Id.ToString()));
 
-            await HttpContext.SignInAsync(
-                CookieAuthenticationDefaults.AuthenticationScheme,
-                new ClaimsPrincipal(identity));
+                await HttpContext.SignInAsync(
+                    CookieAuthenticationDefaults.AuthenticationScheme,
+                    new ClaimsPrincipal(identity));
+            }
+            catch (Exception ex)
+            {
+                logger.LogWarning("Couldn't authenticate.");
+                System.Diagnostics.Debug.WriteLine(ex.Message);
+            }
         }
 
         public async Task<IActionResult> SignOut(LoginModel login)
         {
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            return RedirectToAction("Index", "Home");
+
+            try
+            {
+                await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+                return RedirectToAction("Index", "Home");
+            }
+            catch (Exception ex)
+            {
+                logger.LogWarning("Couldn't signout.");
+                System.Diagnostics.Debug.WriteLine(ex.Message);
+                return RedirectToAction("Index", "Home");
+            }
         }
     }
 }
